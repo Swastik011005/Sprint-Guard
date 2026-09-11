@@ -1,0 +1,25 @@
+.placeholder-page__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-5);
+}
+
+.placeholder-page__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  padding: var(--space-10);
+  color: var(--color-text-muted);
+}
+
+.placeholder-page__icon {
+  color: var(--color-brand-purple);
+}
+
+.placeholder-page__text {
+  font-size: 14px;
+  max-width: 360px;
+}

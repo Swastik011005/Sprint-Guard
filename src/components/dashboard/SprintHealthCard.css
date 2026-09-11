@@ -1,0 +1,63 @@
+.sprint-health__header {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-5);
+}
+
+.sprint-health__progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-size: 14px;
+}
+
+.sprint-health__progress-label {
+  color: var(--color-text-muted);
+}
+
+.sprint-health__progress-value {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.sprint-health__track {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+}
+
+.sprint-health__fill {
+  height: 100%;
+  background: var(--color-success);
+  border-radius: var(--radius-pill);
+}
+
+.sprint-health__status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--color-success-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.sprint-health__status-icon {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.sprint-health__status-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-success-text);
+}
+
+.sprint-health__status-message {
+  font-size: 13px;
+  color: var(--color-success-text);
+  opacity: 0.85;
+}

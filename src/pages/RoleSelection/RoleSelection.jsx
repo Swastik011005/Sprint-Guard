@@ -4,17 +4,18 @@ import * as Icons from 'lucide-react';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Button from '../../components/ui/Button.jsx';
 import { roles } from '../../data/mockRoles.js';
-import { currentUser } from '../../data/mockUsers.js';
+import { useAuth } from '../../auth/AuthContext.jsx';
+import { getDashboardPath } from '../../auth/permissions.js';
 import './RoleSelection.css';
 
 function RoleSelection() {
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = useState(null);
+  const { user, selectRole } = useAuth();
+  const [selectedRole, setSelectedRole] = useState(user?.role || null);
 
   function handleConfirm() {
-    // In a real build this would persist the selected role to the user's
-    // session/profile. For now it just proceeds to the dashboard.
-    navigate('/dashboard');
+    selectRole(selectedRole);
+    navigate(getDashboardPath(selectedRole));
   }
 
   return (
@@ -25,10 +26,8 @@ function RoleSelection() {
           <span>Sprint Guard</span>
         </div>
         <div className="role-selection__user">
-          <span className="role-selection__user-avatar">
-            {currentUser.avatarInitial}
-          </span>
-          <span>{currentUser.name}</span>
+          <span className="role-selection__user-avatar">{user?.avatarInitial}</span>
+          <span>{user?.name}</span>
         </div>
       </header>
 

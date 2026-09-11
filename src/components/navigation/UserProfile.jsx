@@ -1,16 +1,20 @@
 import { ChevronDown } from 'lucide-react';
-import { currentUser } from '../../data/mockUsers.js';
+import { useAuth } from '../../auth/AuthContext.jsx';
+import { getRoleName } from '../../data/mockRoles.js';
 import './UserProfile.css';
 
-// Reads from the mock "current user" object today; swap for real session
-// data once auth exists — the markup/props shape won't need to change.
+// Reads the real signed-in user from AuthContext, so this updates
+// automatically on login/role-selection/logout.
 function UserProfile() {
+  const { user } = useAuth();
+  if (!user) return null;
+
   return (
     <button type="button" className="user-profile">
-      <span className="user-profile__avatar">{currentUser.avatarInitial}</span>
+      <span className="user-profile__avatar">{user.avatarInitial}</span>
       <span className="user-profile__text">
-        <span className="user-profile__name">{currentUser.name}</span>
-        <span className="user-profile__role">{currentUser.role}</span>
+        <span className="user-profile__name">{user.name}</span>
+        <span className="user-profile__role">{getRoleName(user.role)}</span>
       </span>
       <ChevronDown size={16} className="user-profile__chevron" />
     </button>

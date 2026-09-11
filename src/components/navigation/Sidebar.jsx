@@ -9,19 +9,27 @@ import {
   FileText,
   LogOut,
 } from 'lucide-react';
+import { useAuth } from '../../auth/AuthContext.jsx';
+import { PERMISSIONS } from '../../auth/permissions.js';
 import './Sidebar.css';
 
+// Each item declares the permission it needs — the sidebar only ever shows
+// what the signed-in role can actually open, instead of every link for
+// everyone. Adding Developer/Product Owner items later just means adding
+// entries with their own `permission`.
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/active-blockers', label: 'Active Blockers', icon: AlertTriangle },
-  { to: '/blocker-list', label: 'Blocker List', icon: ClipboardList },
-  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/team-status', label: 'Team Status', icon: Users },
-  { to: '/reports', label: 'Reports', icon: FileText },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, permission: PERMISSIONS.ACCESS_DASHBOARD },
+  { to: '/active-blockers', label: 'Active Blockers', icon: AlertTriangle, permission: PERMISSIONS.MANAGE_BLOCKERS },
+  { to: '/blocker-list', label: 'Blocker List', icon: ClipboardList, permission: PERMISSIONS.MANAGE_BLOCKERS },
+  { to: '/analytics', label: 'Analytics', icon: BarChart3, permission: PERMISSIONS.ACCESS_ANALYTICS },
+  { to: '/team-status', label: 'Team Status', icon: Users, permission: PERMISSIONS.VIEW_TEAM },
+  { to: '/reports', label: 'Reports', icon: FileText, permission: PERMISSIONS.VIEW_REPORTS },
 ];
 
 function Sidebar({ isOpen = false, onNavigate }) {
   const navigate = useNavigate();
+  const { can, logout } = useAuth();
+  const visibleItems = navItems.filter((item) => can(item.permission));
 
   return (
     <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
@@ -35,7 +43,7 @@ function Sidebar({ isOpen = false, onNavigate }) {
 
       <nav className="sidebar__nav">
         <ul>
-          {navItems.map(({ to, label, icon: Icon }) => (
+          {visibleItems.map(({ to, label, icon: Icon }) => (
             <li key={to}>
               <NavLink
                 to={to}
@@ -56,7 +64,10 @@ function Sidebar({ isOpen = false, onNavigate }) {
         <button
           type="button"
           className="sidebar__link sidebar__logout"
-          onClick={() => navigate('/login')}
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
         >
           <LogOut size={18} />
           <span>Logout</span>

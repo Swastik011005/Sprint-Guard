@@ -1,18 +1,33 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, AlertCircle } from 'lucide-react';
 import Input from '../../components/ui/Input.jsx';
 import Button from '../../components/ui/Button.jsx';
+import { useAuth } from '../../auth/AuthContext.jsx';
 import './Login.css';
 
-// Visual only — there is no real authentication yet. Submitting the form
-// simply moves the user forward to Role Selection.
+// This is still MOCK authentication — any non-empty email/username +
+// password combination succeeds. It exists to establish a real signed-in
+// user (see AuthContext) so role selection, RBAC, and session persistence
+// have something to attach to; it is not real security.
 function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   function handleSubmit(event) {
     event.preventDefault();
+    const result = login(email, password);
+
+    if (!result.success) {
+      setError(result.error);
+      return;
+    }
+
+    setError('');
     navigate('/role-selection');
   }
 
@@ -34,7 +49,13 @@ function Login() {
           <p className="login__subheading">Login to your account</p>
 
           <div className="login__field">
-            <Input icon={Mail} type="text" placeholder="Email / Username" required />
+            <Input
+              icon={Mail}
+              type="text"
+              placeholder="Email / Username"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
           </div>
 
           <div className="login__field">
@@ -42,7 +63,8 @@ function Login() {
               icon={Lock}
               type={showPassword ? 'text' : 'password'}
               placeholder="Password"
-              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               trailing={
                 <button
                   type="button"
@@ -55,6 +77,13 @@ function Login() {
               }
             />
           </div>
+
+          {error && (
+            <div className="login__error">
+              <AlertCircle size={15} />
+              <span>{error}</span>
+            </div>
+          )}
 
           <a href="#forgot-password" className="login__forgot">
             Forgot Password?

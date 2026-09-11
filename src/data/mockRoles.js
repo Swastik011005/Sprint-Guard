@@ -20,3 +20,9 @@ export const roles = [
     icon: 'ClipboardList',
   },
 ];
+
+// Turns a role id (e.g. "scrum-master") into its display label (e.g.
+// "Scrum Master") wherever a role needs to be shown as text.
+export function getRoleName(roleId) {
+  return roles.find((role) => role.id === roleId)?.name || roleId;
+}

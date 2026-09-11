@@ -1,0 +1,41 @@
+.access-denied {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: var(--space-6);
+}
+
+.access-denied__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  max-width: 380px;
+  padding: var(--space-8);
+}
+
+.access-denied__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+}
+
+.access-denied__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.access-denied__message {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}

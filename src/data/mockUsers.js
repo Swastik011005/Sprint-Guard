@@ -1,9 +1,7 @@
-// Mock "current user" object. Replace with real auth/session data later.
-export const currentUser = {
-  name: 'Swastik',
-  role: 'Scrum Master',
-  avatarInitial: 'S',
-};
+// The signed-in "current user" now lives in src/auth/AuthContext.jsx
+// (useAuth().user) so it can actually change on login/role-selection/logout
+// instead of being a fixed constant. This file just keeps the mock team
+// directory used elsewhere.
 
 // Simple mock directory used by the top-bar search to match "team members".
 export const teamMembers = [

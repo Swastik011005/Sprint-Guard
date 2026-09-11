@@ -79,6 +79,17 @@ Navigation flow: **Login → Role Selection → Dashboard**. There is no real
 auth guard yet, so every route is directly reachable by URL — that's
 intentional for this stage.
 
+## Auth & Role-Based Access Control (mock)
+
+This is **mock authentication for prototyping**, not real security:
+
+- `src/auth/AuthContext.jsx` — holds the signed-in user (`{ id, name, email, role }`), persisted to `localStorage` under `sprintguard.auth`. `login(email, password)` accepts any non-empty credentials; `selectRole(roleId)` sets the role; `logout()` clears everything.
+- `src/auth/permissions.js` — the single source of truth for what each role can do (`PERMISSIONS` keys + a `ROLE_PERMISSIONS` map). Only `scrum-master` is filled in today; `developer` and `product-owner` exist as all-false placeholders ready to be filled in later without touching any component.
+- `src/auth/ProtectedRoute.jsx` — route guards: `RootRedirect` (for `/`), `RedirectIfAuthenticated` (for `/login`), `RequireAuthenticated` (for `/role-selection`), `RequireAuthAndRole` (layout guard for the app shell), and `ProtectedRoute` (per-page permission gate that renders `AccessDenied` on failure).
+- `src/pages/AccessDenied/` — shown whenever a signed-in, role-selected user lacks the permission a route requires.
+
+Because only Scrum Master has permissions turned on right now, selecting **Developer** or **Product Owner** on the Role Selection screen will correctly land on an Access Denied screen when trying to reach `/dashboard` — that's the RBAC system working as designed, not a bug. Those roles get their own dashboards and permissions in a later phase.
+
 ## Development Workflow
 
 ```

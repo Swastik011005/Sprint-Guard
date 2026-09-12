@@ -1,8 +1,5 @@
-import { useState } from 'react';
 import { Component, Slack, BookOpen, Github } from 'lucide-react';
 import Card from '../ui/Card.jsx';
-import Dropdown from '../ui/Dropdown.jsx';
-import { sourceBreakdown } from '../../data/dashboardData.js';
 import './SourceChart.css';
 
 const SOURCE_ICONS = {
@@ -12,37 +9,51 @@ const SOURCE_ICONS = {
   github: Github,
 };
 
-const RANGE_OPTIONS = [
-  { id: 'this-sprint', label: 'This Sprint' },
-  { id: 'last-sprint', label: 'Last Sprint' },
-];
-
-// Simple CSS-bar chart — heights are computed as a percentage of the max
-// value so the visual stays proportional however the mock numbers change.
-function SourceChart() {
-  const [range, setRange] = useState('this-sprint');
-  const maxValue = Math.max(...sourceBreakdown.map((source) => source.value));
+// Presentational bar chart — CSS bars, no charting dependency. Clicking a
+// bar/label filters the Recently Detected Blockers table by that source;
+// clicking the same source again clears the filter.
+function SourceChart({ data, selectedSource, onSelectSource }) {
+  const maxValue = Math.max(1, ...data.map((source) => source.value));
 
   return (
     <Card className="source-chart">
       <div className="source-chart__header">
         <div className="source-chart__title">Blockers by Source</div>
-        <Dropdown value={range} options={RANGE_OPTIONS} onChange={setRange} />
+        {selectedSource && (
+          <button
+            type="button"
+            className="source-chart__clear"
+            onClick={() => onSelectSource(null)}
+          >
+            Clear filter
+          </button>
+        )}
       </div>
 
       <div className="source-chart__bars">
-        {sourceBreakdown.map((source) => {
+        {data.map((source) => {
           const Icon = SOURCE_ICONS[source.id];
           const heightPercent = (source.value / maxValue) * 100;
+          const isDimmed = selectedSource && selectedSource !== source.label;
 
           return (
-            <div className="source-chart__bar-column" key={source.id}>
+            <button
+              type="button"
+              className={`source-chart__bar-column ${
+                selectedSource === source.label ? 'source-chart__bar-column--active' : ''
+              }`}
+              key={source.id}
+              onClick={() => onSelectSource(source.label)}
+            >
               <div className="source-chart__bar-track">
-                <div className="source-chart__bar" style={{ height: `${heightPercent}%` }} />
+                <div
+                  className="source-chart__bar"
+                  style={{ height: `${heightPercent}%`, opacity: isDimmed ? 0.35 : 1 }}
+                />
               </div>
               <Icon size={16} className="source-chart__icon" />
               <span className="source-chart__label">{source.label}</span>
-            </div>
+            </button>
           );
         })}
       </div>

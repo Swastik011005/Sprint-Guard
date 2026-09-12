@@ -3,6 +3,7 @@ import AppLayout from './components/common/AppLayout.jsx';
 import Login from './pages/Login/Login.jsx';
 import RoleSelection from './pages/RoleSelection/RoleSelection.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
+import BlockerListPage from './pages/BlockerList/BlockerListPage.jsx';
 import PlaceholderPage from './pages/Placeholder/PlaceholderPage.jsx';
 import ProtectedRoute, {
   RootRedirect,
@@ -11,6 +12,18 @@ import ProtectedRoute, {
   RequireAuthAndRole,
 } from './auth/ProtectedRoute.jsx';
 import { PERMISSIONS } from './auth/permissions.js';
+import { BlockerProvider } from './context/BlockerContext.jsx';
+
+// Wrapping AppLayout in BlockerProvider (rather than wrapping the whole app
+// in main.jsx) keeps blocker/sprint state scoped to the authenticated
+// product shell — Login and Role Selection don't need it.
+function ProtectedAppShell() {
+  return (
+    <BlockerProvider>
+      <AppLayout />
+    </BlockerProvider>
+  );
+}
 
 function App() {
   return (
@@ -36,7 +49,7 @@ function App() {
       />
 
       <Route element={<RequireAuthAndRole />}>
-        <Route element={<AppLayout />}>
+        <Route element={<ProtectedAppShell />}>
           <Route
             path="/dashboard"
             element={
@@ -49,7 +62,7 @@ function App() {
             path="/active-blockers"
             element={
               <ProtectedRoute permission={PERMISSIONS.MANAGE_BLOCKERS}>
-                <PlaceholderPage title="Active Blockers" />
+                <BlockerListPage scope="active" title="Active Blockers" />
               </ProtectedRoute>
             }
           />
@@ -57,7 +70,7 @@ function App() {
             path="/blocker-list"
             element={
               <ProtectedRoute permission={PERMISSIONS.MANAGE_BLOCKERS}>
-                <PlaceholderPage title="Blocker List" />
+                <BlockerListPage scope="all" title="Blocker List" />
               </ProtectedRoute>
             }
           />

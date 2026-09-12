@@ -1,19 +1,20 @@
-import { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import Dropdown from '../ui/Dropdown.jsx';
-import { sprints, currentSprintId } from '../../data/dashboardData.js';
+import { useBlockers } from '../../context/BlockerContext.jsx';
 
-// Visually functional against mock sprint data; wiring it to a real sprint
-// list/backend later is a drop-in change since it's driven entirely by props/state.
+// Driven by BlockerContext now, not local state — changing the sprint here
+// updates every derived dashboard number (summary cards, both charts, the
+// blocker table, and sprint health) since they all read from the same
+// context.
 function SprintSelector() {
-  const [selectedSprint, setSelectedSprint] = useState(currentSprintId);
+  const { sprints, sprintId, setSprintId } = useBlockers();
 
   return (
     <Dropdown
       label="Current Sprint"
-      value={selectedSprint}
+      value={sprintId}
       options={sprints}
-      onChange={setSelectedSprint}
+      onChange={setSprintId}
       icon={Calendar}
     />
   );

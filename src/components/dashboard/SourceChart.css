@@ -11,6 +11,16 @@
   color: var(--color-text);
 }
 
+.source-chart__clear {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand-purple-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
 .source-chart__bars {
   display: flex;
   align-items: flex-end;
@@ -25,6 +35,16 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1);
+}
+
+.source-chart__bar-column:hover,
+.source-chart__bar-column--active {
+  background: var(--color-bg);
 }
 
 .source-chart__bar-track {

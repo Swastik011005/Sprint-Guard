@@ -1,15 +1,18 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Search, AlertCircle, User } from 'lucide-react';
-import { recentBlockers } from '../../data/dashboardData.js';
 import { teamMembers } from '../../data/mockUsers.js';
+import { useBlockers } from '../../context/BlockerContext.jsx';
 import './SearchBar.css';
 
-// Very small client-side search across the mock blockers + team member data.
-// Intentionally simple: this is a foundation, real search will come later.
+// Searches the current sprint's blockers (by id, title, and source) plus
+// the mock team directory (by name, doubling as a "reporter" search since
+// every blocker's reportedBy/assignedTo comes from this same list).
+// Selecting a blocker result opens its detail view via BlockerContext.
 function SearchBar() {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const rootRef = useRef(null);
+  const { blockers, openBlockerDetail } = useBlockers();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -26,17 +29,25 @@ function SearchBar() {
     if (!term) return { blockers: [], members: [] };
 
     return {
-      blockers: recentBlockers.filter((blocker) =>
-        blocker.title.toLowerCase().includes(term)
+      blockers: blockers.filter(
+        (blocker) =>
+          blocker.title.toLowerCase().includes(term) ||
+          blocker.id.toLowerCase().includes(term) ||
+          blocker.source.toLowerCase().includes(term) ||
+          blocker.reportedBy.toLowerCase().includes(term)
       ),
-      members: teamMembers.filter((member) =>
-        member.name.toLowerCase().includes(term)
-      ),
+      members: teamMembers.filter((member) => member.name.toLowerCase().includes(term)),
     };
-  }, [query]);
+  }, [query, blockers]);
 
   const hasQuery = query.trim().length > 0;
   const hasResults = results.blockers.length > 0 || results.members.length > 0;
+
+  function handleBlockerClick(blockerId) {
+    openBlockerDetail(blockerId);
+    setQuery('');
+    setFocused(false);
+  }
 
   return (
     <div className="search-bar" ref={rootRef}>
@@ -55,7 +66,12 @@ function SearchBar() {
           {!hasResults && <div className="search-bar__empty">No matches found</div>}
 
           {results.blockers.map((blocker) => (
-            <div className="search-bar__result" key={blocker.id}>
+            <button
+              type="button"
+              className="search-bar__result"
+              key={blocker.id}
+              onClick={() => handleBlockerClick(blocker.id)}
+            >
               <AlertCircle size={15} />
               <div>
                 <div className="search-bar__result-title">{blocker.title}</div>
@@ -63,11 +79,11 @@ function SearchBar() {
                   {blocker.id} · {blocker.source}
                 </div>
               </div>
-            </div>
+            </button>
           ))}
 
           {results.members.map((member) => (
-            <div className="search-bar__result" key={member.id}>
+            <div className="search-bar__result search-bar__result--static" key={member.id}>
               <User size={15} />
               <div>
                 <div className="search-bar__result-title">{member.name}</div>

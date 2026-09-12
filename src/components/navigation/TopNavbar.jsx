@@ -1,10 +1,11 @@
-import { Bell, Settings, Menu } from 'lucide-react';
+import { Settings, Menu } from 'lucide-react';
 import SearchBar from './SearchBar.jsx';
+import NotificationPanel from './NotificationPanel.jsx';
 import UserProfile from './UserProfile.jsx';
 import './TopNavbar.css';
 
-// Notification and settings icons are visual placeholders for now — real
-// behaviour lands once those features are built on their own branches.
+// Settings icon remains a visual placeholder — real behaviour lands in
+// Phase 5. Notifications are now a functional dropdown (NotificationPanel).
 function TopNavbar({ onMenuClick }) {
   return (
     <header className="top-navbar">
@@ -20,9 +21,7 @@ function TopNavbar({ onMenuClick }) {
       <SearchBar />
 
       <div className="top-navbar__actions">
-        <button type="button" className="top-navbar__icon-btn" aria-label="Notifications">
-          <Bell size={19} />
-        </button>
+        <NotificationPanel />
         <button type="button" className="top-navbar__icon-btn" aria-label="Settings">
           <Settings size={19} />
         </button>

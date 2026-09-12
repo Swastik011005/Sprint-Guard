@@ -45,3 +45,18 @@
 .blocker-table__muted {
   color: var(--color-text-muted);
 }
+
+.blocker-table__row--clickable {
+  cursor: pointer;
+}
+
+.blocker-table__row--clickable:hover {
+  background: var(--color-bg);
+}
+
+.blocker-table__empty {
+  padding: var(--space-8) var(--space-5);
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}

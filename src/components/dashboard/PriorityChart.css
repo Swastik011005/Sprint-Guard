@@ -1,8 +1,29 @@
+.priority-chart__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
 .priority-chart__header {
   font-size: 15px;
   font-weight: 700;
   color: var(--color-text);
-  margin-bottom: var(--space-5);
+}
+
+.priority-chart__clear {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand-purple-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.priority-chart__slice {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
 }
 
 .priority-chart__body {
@@ -30,7 +51,7 @@
 .priority-chart__legend {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-1);
 }
 
 .priority-chart__legend-item {
@@ -39,6 +60,20 @@
   gap: var(--space-2);
   font-size: 14px;
   color: var(--color-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  width: 100%;
+}
+
+.priority-chart__legend-item:hover {
+  background: var(--color-bg);
+}
+
+.priority-chart__legend-item--active {
+  background: var(--color-brand-purple-light);
 }
 
 .priority-chart__legend-dot {

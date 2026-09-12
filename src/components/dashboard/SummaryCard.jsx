@@ -4,11 +4,21 @@ import './SummaryCard.css';
 
 // One component for all four summary cards — `variant` selects the color
 // treatment (danger/warning/success/info) and `icon` names a lucide-react icon.
-function SummaryCard({ title, value, description, icon, variant = 'info' }) {
+// Passing `onClick` turns the card into a button-like, clickable affordance;
+// omit it (as Avg. Resolution Time does) to keep a card purely informative.
+function SummaryCard({ title, value, description, icon, variant = 'info', onClick }) {
   const Icon = Icons[icon] || Icons.Circle;
+  const isClickable = typeof onClick === 'function';
 
   return (
-    <Card className={`summary-card summary-card--${variant}`}>
+    <Card
+      as={isClickable ? 'button' : 'div'}
+      type={isClickable ? 'button' : undefined}
+      onClick={onClick}
+      className={`summary-card summary-card--${variant} ${
+        isClickable ? 'summary-card--clickable' : ''
+      }`}
+    >
       <div className="summary-card__icon">
         <Icon size={20} />
       </div>
@@ -20,3 +30,4 @@ function SummaryCard({ title, value, description, icon, variant = 'info' }) {
 }
 
 export default SummaryCard;
+

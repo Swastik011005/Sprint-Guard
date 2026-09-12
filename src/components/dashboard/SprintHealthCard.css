@@ -32,32 +32,65 @@
 
 .sprint-health__fill {
   height: 100%;
-  background: var(--color-success);
   border-radius: var(--radius-pill);
+  transition: width 0.2s ease;
+}
+
+.sprint-health__fill.sprint-health--success {
+  background: var(--color-success);
+}
+.sprint-health__fill.sprint-health--warning {
+  background: var(--color-warning);
+}
+.sprint-health__fill.sprint-health--danger {
+  background: var(--color-danger);
 }
 
 .sprint-health__status {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
-  background: var(--color-success-bg);
   border-radius: var(--radius-md);
   padding: var(--space-4);
 }
 
+.sprint-health__status.sprint-health--success {
+  background: var(--color-success-bg);
+}
+.sprint-health__status.sprint-health--success .sprint-health__status-icon,
+.sprint-health__status.sprint-health--success .sprint-health__status-title,
+.sprint-health__status.sprint-health--success .sprint-health__status-message {
+  color: var(--color-success-text);
+}
+
+.sprint-health__status.sprint-health--warning {
+  background: var(--color-warning-bg);
+}
+.sprint-health__status.sprint-health--warning .sprint-health__status-icon,
+.sprint-health__status.sprint-health--warning .sprint-health__status-title,
+.sprint-health__status.sprint-health--warning .sprint-health__status-message {
+  color: var(--color-warning-text);
+}
+
+.sprint-health__status.sprint-health--danger {
+  background: var(--color-danger-bg);
+}
+.sprint-health__status.sprint-health--danger .sprint-health__status-icon,
+.sprint-health__status.sprint-health--danger .sprint-health__status-title,
+.sprint-health__status.sprint-health--danger .sprint-health__status-message {
+  color: var(--color-danger-text);
+}
+
 .sprint-health__status-icon {
-  color: var(--color-success);
   flex-shrink: 0;
 }
 
 .sprint-health__status-title {
   font-size: 14px;
   font-weight: 700;
-  color: var(--color-success-text);
 }
 
 .sprint-health__status-message {
   font-size: 13px;
-  color: var(--color-success-text);
-  opacity: 0.85;
+  opacity: 0.9;
 }

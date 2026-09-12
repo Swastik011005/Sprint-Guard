@@ -53,6 +53,16 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.search-bar__result--static {
+  cursor: default;
 }
 
 .search-bar__result:hover {

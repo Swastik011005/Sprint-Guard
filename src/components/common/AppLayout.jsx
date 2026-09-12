@@ -2,11 +2,16 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../navigation/Sidebar.jsx';
 import TopNavbar from '../navigation/TopNavbar.jsx';
+import BlockerDetailModal from '../dashboard/BlockerDetailModal.jsx';
 import './AppLayout.css';
 
 // Shared shell for every page that sits "inside" the product (Dashboard and
 // the placeholder feature pages). Login and Role Selection render outside
 // this layout since they don't show the sidebar/top bar.
+//
+// BlockerDetailModal is rendered once here (rather than per-page) since any
+// page/component under this layout — search, notifications, a blocker
+// table row — can open it via BlockerContext's openBlockerId state.
 function AppLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -27,6 +32,7 @@ function AppLayout() {
           <Outlet />
         </div>
       </div>
+      <BlockerDetailModal />
     </div>
   );
 }

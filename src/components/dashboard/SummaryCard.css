@@ -3,6 +3,19 @@
   flex-direction: column;
   gap: var(--space-1);
   border: none;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+}
+
+.summary-card--clickable {
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.summary-card--clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .summary-card__icon {

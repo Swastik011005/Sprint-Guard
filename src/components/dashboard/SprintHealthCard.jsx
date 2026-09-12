@@ -1,32 +1,49 @@
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, AlertOctagon } from 'lucide-react';
 import Card from '../ui/Card.jsx';
-import { sprintHealth } from '../../data/dashboardData.js';
 import './SprintHealthCard.css';
 
-function SprintHealthCard() {
+const STATUS_ICON = {
+  'On Track': CheckCircle2,
+  'At Risk': AlertTriangle,
+  Critical: AlertOctagon,
+};
+
+const STATUS_CLASS = {
+  'On Track': 'sprint-health--success',
+  'At Risk': 'sprint-health--warning',
+  Critical: 'sprint-health--danger',
+};
+
+// Presentational — `progressPercent`, `status`, and `message` are derived
+// per-sprint by getSprintHealth() in dashboardData.js and passed down, so
+// this card always reflects whichever sprint is currently selected.
+function SprintHealthCard({ progressPercent, status, message }) {
+  const StatusIcon = STATUS_ICON[status] || CheckCircle2;
+  const statusClass = STATUS_CLASS[status] || 'sprint-health--success';
+
   return (
     <Card className="sprint-health">
       <div className="sprint-health__header">Sprint Health</div>
 
       <div className="sprint-health__progress-row">
         <span className="sprint-health__progress-label">Sprint Progress</span>
-        <span className="sprint-health__progress-value">{sprintHealth.progressPercent}%</span>
+        <span className="sprint-health__progress-value">{progressPercent}%</span>
       </div>
 
       <div className="sprint-health__track">
         <div
-          className="sprint-health__fill"
-          style={{ width: `${sprintHealth.progressPercent}%` }}
+          className={`sprint-health__fill ${statusClass}`}
+          style={{ width: `${progressPercent}%` }}
         />
       </div>
 
-      <div className="sprint-health__status">
+      <div className={`sprint-health__status ${statusClass}`}>
         <div className="sprint-health__status-icon">
-          <CheckCircle2 size={20} />
+          <StatusIcon size={20} />
         </div>
         <div>
-          <div className="sprint-health__status-title">{sprintHealth.status}</div>
-          <div className="sprint-health__status-message">{sprintHealth.message}</div>
+          <div className="sprint-health__status-title">{status}</div>
+          <div className="sprint-health__status-message">{message}</div>
         </div>
       </div>
     </Card>

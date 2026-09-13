@@ -27,7 +27,7 @@ const AVG_RESOLUTION_DAYS = {
 };
 
 export function getActiveBlockers(blockers) {
-  return blockers.filter((b) => b.status !== 'Resolved');
+  return blockers.filter((b) => b.status !== 'Resolved' && b.status !== 'Closed');
 }
 
 export function getSummary(blockers, sprintId) {

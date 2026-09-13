@@ -62,12 +62,16 @@ export function AuthProvider({ children }) {
     }
 
     // A fresh login always starts the role-selection flow over, even if the
-    // same account previously had a role picked.
+    // same account previously had a role picked. Team/availability are
+    // mock profile fields established at login time.
     setAccount({
       id: `user-${Date.now()}`,
       name: deriveNameFromEmail(email),
       email: email.trim(),
       role: null,
+      team: 'Platform Team',
+      availability: 'Available',
+      avatarText: null,
     });
 
     return { success: true };
@@ -81,12 +85,25 @@ export function AuthProvider({ children }) {
     setAccount(null);
   }
 
+  // Edit Profile: display name, email, and an optional custom avatar
+  // initial/text override. Persists automatically via the effect above.
+  function updateProfile(updates) {
+    setAccount((prev) => (prev ? { ...prev, ...updates } : prev));
+  }
+
+  function setAvailability(status) {
+    setAccount((prev) => (prev ? { ...prev, availability: status } : prev));
+  }
+
   const permissions = account?.role ? getPermissionsForRole(account.role) : {};
 
   const user = account
     ? {
         ...account,
-        avatarInitial: account.name?.[0]?.toUpperCase() || '?',
+        avatarInitial:
+          account.avatarText?.trim()?.[0]?.toUpperCase() ||
+          account.name?.[0]?.toUpperCase() ||
+          '?',
         permissions,
       }
     : null;
@@ -97,6 +114,8 @@ export function AuthProvider({ children }) {
     login,
     selectRole,
     logout,
+    updateProfile,
+    setAvailability,
     can: (permissionKey) => !!permissions[permissionKey],
   };
 

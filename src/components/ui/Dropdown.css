@@ -53,6 +53,7 @@
   box-shadow: var(--shadow-md);
   padding: var(--space-2);
   z-index: 20;
+  animation: dropdown-in 0.15s ease;
 }
 
 .dropdown__option {

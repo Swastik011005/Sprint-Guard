@@ -35,6 +35,7 @@
   box-shadow: var(--shadow-md);
   z-index: 30;
   overflow: hidden;
+  animation: dropdown-in 0.15s ease;
 }
 
 .notification-panel__header {

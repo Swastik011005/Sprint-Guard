@@ -60,6 +60,7 @@
   min-height: 6px;
   background: var(--color-brand-purple);
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: height 0.3s ease, opacity 0.15s ease;
 }
 
 .source-chart__icon {

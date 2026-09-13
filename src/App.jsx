@@ -4,6 +4,7 @@ import Login from './pages/Login/Login.jsx';
 import RoleSelection from './pages/RoleSelection/RoleSelection.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import BlockerListPage from './pages/BlockerList/BlockerListPage.jsx';
+import Settings from './pages/Settings/Settings.jsx';
 import PlaceholderPage from './pages/Placeholder/PlaceholderPage.jsx';
 import ProtectedRoute, {
   RootRedirect,
@@ -71,6 +72,14 @@ function App() {
             element={
               <ProtectedRoute permission={PERMISSIONS.MANAGE_BLOCKERS}>
                 <BlockerListPage scope="all" title="Blocker List" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute permission={PERMISSIONS.ACCESS_SETTINGS}>
+                <Settings />
               </ProtectedRoute>
             }
           />

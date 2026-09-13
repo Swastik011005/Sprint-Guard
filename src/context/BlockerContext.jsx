@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from 'react';
-import { blockersBySprint as initialBlockersBySprint } from '../data/blockerData.js';
+import { blockersBySprint as rawBlockersBySprint } from '../data/blockerData.js';
 import {
   sprints,
   currentSprintId,
@@ -14,14 +14,36 @@ import { initialNotifications } from '../data/notificationData.js';
 // Single shared state hub for everything the Scrum Master dashboard and
 // blocker-management pages need: which sprint is selected, the (mutable,
 // in-memory) blocker records, which blocker's detail view is open, and the
-// mock notification feed. Kept as plain React state/context per Phase 2
-// scope — no Redux needed for this size of app.
+// mock notification feed. Kept as plain React state/context — no Redux
+// needed for this size of app.
 
 const BlockerContext = createContext(null);
 
+// Seed records don't carry a `lastUpdated` field — default it to
+// `detectedOn` once, at load time, rather than hand-editing every record.
+function withDefaults(bySprint) {
+  return Object.fromEntries(
+    Object.entries(bySprint).map(([sprintIdKey, list]) => [
+      sprintIdKey,
+      list.map((b) => ({ ...b, lastUpdated: b.lastUpdated || b.detectedOn })),
+    ])
+  );
+}
+
+function nextBlockerId(bySprint) {
+  let max = 1000;
+  for (const list of Object.values(bySprint)) {
+    for (const blocker of list) {
+      const match = /^BLK-(\d+)$/.exec(blocker.id);
+      if (match) max = Math.max(max, Number(match[1]));
+    }
+  }
+  return `BLK-${max + 1}`;
+}
+
 export function BlockerProvider({ children }) {
   const [sprintId, setSprintId] = useState(currentSprintId);
-  const [blockersState, setBlockersState] = useState(initialBlockersBySprint);
+  const [blockersState, setBlockersState] = useState(() => withDefaults(rawBlockersBySprint));
   const [openBlockerId, setOpenBlockerId] = useState(null);
   const [notifications, setNotifications] = useState(initialNotifications);
 
@@ -46,50 +68,126 @@ export function BlockerProvider({ children }) {
     return blockers.find((b) => b.id === blockerId) || findBlockerAnywhere(blockerId);
   }
 
-  function mutateBlocker(blockerId, updater) {
+  // Diffs `changes` against the blocker's current fields and appends one
+  // human-readable activity line per changed field, so every meaningful
+  // edit — from a quick status pill to a full form edit — goes through the
+  // same activity-log path instead of each caller writing its own text.
+  function describeChange(field, before, after) {
+    switch (field) {
+      case 'status':
+        return `Status changed from ${before} to ${after}.`;
+      case 'priority':
+        return `Priority changed from ${before} to ${after}.`;
+      case 'assignedTo':
+        return `Assigned to ${after}.`;
+      case 'title':
+        return 'Title updated.';
+      case 'description':
+        return 'Description updated.';
+      default:
+        return `${field} updated.`;
+    }
+  }
+
+  function applyBlockerUpdate(blockerId, changes) {
     setBlockersState((prev) => {
       const next = { ...prev };
       for (const sId of Object.keys(next)) {
         const index = next[sId].findIndex((b) => b.id === blockerId);
-        if (index !== -1) {
-          const updatedList = [...next[sId]];
-          updatedList[index] = updater(updatedList[index]);
-          next[sId] = updatedList;
-          break;
+        if (index === -1) continue;
+
+        const current = next[sId][index];
+        const newActivityEntries = [];
+
+        for (const [field, value] of Object.entries(changes)) {
+          if (value === undefined || value === current[field]) continue;
+          newActivityEntries.push({
+            id: `a-${Date.now()}-${field}`,
+            text: describeChange(field, current[field], value),
+            timestamp: 'Just now',
+          });
         }
+
+        if (newActivityEntries.length === 0) return prev;
+
+        const updatedList = [...next[sId]];
+        updatedList[index] = {
+          ...current,
+          ...changes,
+          lastUpdated: 'Just now',
+          activity: [...current.activity, ...newActivityEntries],
+        };
+        next[sId] = updatedList;
+        break;
       }
       return next;
     });
   }
 
   function updateBlockerStatus(blockerId, newStatus) {
-    mutateBlocker(blockerId, (blocker) => ({
-      ...blocker,
-      status: newStatus,
-      activity: [
-        ...blocker.activity,
-        {
-          id: `a-${Date.now()}`,
-          text: `Status changed from ${blocker.status} to ${newStatus}.`,
-          timestamp: 'Just now',
-        },
-      ],
-    }));
+    applyBlockerUpdate(blockerId, { status: newStatus });
   }
 
   function updateBlockerPriority(blockerId, newPriority) {
-    mutateBlocker(blockerId, (blocker) => ({
-      ...blocker,
-      priority: newPriority,
-      activity: [
-        ...blocker.activity,
-        {
-          id: `a-${Date.now()}`,
-          text: `Priority changed from ${blocker.priority} to ${newPriority}.`,
-          timestamp: 'Just now',
-        },
-      ],
+    applyBlockerUpdate(blockerId, { priority: newPriority });
+  }
+
+  function updateBlockerAssignee(blockerId, assignedTo) {
+    applyBlockerUpdate(blockerId, { assignedTo });
+  }
+
+  // Used by the Edit Blocker form — applies several field changes (title,
+  // description, priority, assignee, status) in one go.
+  function editBlocker(blockerId, changes) {
+    applyBlockerUpdate(blockerId, changes);
+  }
+
+  // Used by the "+ Report Blocker" form. Places the new blocker into
+  // whichever sprint the form specifies and switches the active sprint to
+  // match, so it's visible in the list immediately.
+  function createBlocker(formValues) {
+    const id = nextBlockerId(blockersState);
+    const targetSprintId = formValues.sprintId || sprintId;
+
+    const newBlocker = {
+      id,
+      sprintId: targetSprintId,
+      title: formValues.title,
+      description: formValues.description,
+      source: formValues.source,
+      priority: formValues.priority,
+      status: 'Open',
+      detectedOn: 'Just now',
+      lastUpdated: 'Just now',
+      reportedBy: formValues.reportedBy,
+      assignedTo: formValues.assignedTo,
+      activity: [{ id: 'a1', text: 'Blocker created.', timestamp: 'Just now' }],
+    };
+
+    setBlockersState((prev) => ({
+      ...prev,
+      [targetSprintId]: [newBlocker, ...(prev[targetSprintId] || [])],
     }));
+
+    if (targetSprintId !== sprintId) {
+      setSprintId(targetSprintId);
+    }
+
+    return id;
+  }
+
+  function deleteBlocker(blockerId) {
+    setBlockersState((prev) => {
+      const next = { ...prev };
+      for (const sId of Object.keys(next)) {
+        if (next[sId].some((b) => b.id === blockerId)) {
+          next[sId] = next[sId].filter((b) => b.id !== blockerId);
+          break;
+        }
+      }
+      return next;
+    });
+    setOpenBlockerId((current) => (current === blockerId ? null : current));
   }
 
   // Used by search results and notifications: makes sure the sprint
@@ -133,6 +231,10 @@ export function BlockerProvider({ children }) {
     getBlockerById,
     updateBlockerStatus,
     updateBlockerPriority,
+    updateBlockerAssignee,
+    editBlocker,
+    createBlocker,
+    deleteBlocker,
     openBlockerId,
     openBlockerDetail,
     closeBlockerDetail,

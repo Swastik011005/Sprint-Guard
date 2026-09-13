@@ -12,7 +12,7 @@
 }
 
 .app-layout__content {
-  padding: var(--space-6);
+  padding: var(--space-5);
 }
 
 .app-layout__overlay {

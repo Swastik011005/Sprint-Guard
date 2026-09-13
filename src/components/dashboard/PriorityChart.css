@@ -23,7 +23,7 @@
 
 .priority-chart__slice {
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, stroke-dasharray 0.3s ease, stroke-dashoffset 0.3s ease;
 }
 
 .priority-chart__body {

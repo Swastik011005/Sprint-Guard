@@ -7,6 +7,7 @@ import {
   BarChart3,
   Users,
   FileText,
+  Settings,
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext.jsx';
@@ -24,6 +25,7 @@ const navItems = [
   { to: '/analytics', label: 'Analytics', icon: BarChart3, permission: PERMISSIONS.ACCESS_ANALYTICS },
   { to: '/team-status', label: 'Team Status', icon: Users, permission: PERMISSIONS.VIEW_TEAM },
   { to: '/reports', label: 'Reports', icon: FileText, permission: PERMISSIONS.VIEW_REPORTS },
+  { to: '/settings', label: 'Settings', icon: Settings, permission: PERMISSIONS.ACCESS_SETTINGS },
 ];
 
 function Sidebar({ isOpen = false, onNavigate }) {

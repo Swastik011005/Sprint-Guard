@@ -1,0 +1,62 @@
+.delete-dialog__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 12, 41, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 120;
+  animation: modal-overlay-fade 0.15s ease;
+}
+
+.delete-dialog {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 380px;
+  padding: var(--space-6);
+  text-align: center;
+  animation: modal-pop-in 0.18s ease;
+}
+
+.delete-dialog__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+}
+
+.delete-dialog__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.delete-dialog__message {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: var(--space-5);
+}
+
+.delete-dialog__actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.delete-dialog__confirm {
+  background: var(--color-danger);
+}
+
+.delete-dialog__confirm:hover {
+  background: var(--color-danger-text);
+}

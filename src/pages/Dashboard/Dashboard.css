@@ -1,7 +1,7 @@
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 .dashboard__header {
@@ -27,21 +27,40 @@
 .dashboard__summary-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
 }
 
 .dashboard__charts-grid {
   display: grid;
   grid-template-columns: 1fr 1.3fr;
-  gap: var(--space-5);
+  gap: var(--space-4);
 }
 
 .dashboard__bottom-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: var(--space-5);
+  gap: var(--space-4);
   align-items: start;
 }
+
+/* Subtle staggered entrance — each section's direct children fade/slide in
+   in sequence rather than all popping in at once. */
+.dashboard__summary-grid > *,
+.dashboard__charts-grid > *,
+.dashboard__bottom-grid > * {
+  animation: fade-in-up 0.35s ease both;
+}
+
+.dashboard__summary-grid > *:nth-child(1) { animation-delay: 0s; }
+.dashboard__summary-grid > *:nth-child(2) { animation-delay: 0.05s; }
+.dashboard__summary-grid > *:nth-child(3) { animation-delay: 0.1s; }
+.dashboard__summary-grid > *:nth-child(4) { animation-delay: 0.15s; }
+
+.dashboard__charts-grid > *:nth-child(1) { animation-delay: 0.1s; }
+.dashboard__charts-grid > *:nth-child(2) { animation-delay: 0.15s; }
+
+.dashboard__bottom-grid > *:nth-child(1) { animation-delay: 0.15s; }
+.dashboard__bottom-grid > *:nth-child(2) { animation-delay: 0.2s; }
 
 @media (max-width: 1100px) {
   .dashboard__summary-grid {

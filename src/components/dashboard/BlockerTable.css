@@ -46,6 +46,14 @@
   color: var(--color-text-muted);
 }
 
+.blocker-table__description {
+  color: var(--color-text-muted);
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .blocker-table__row--clickable {
   cursor: pointer;
 }
